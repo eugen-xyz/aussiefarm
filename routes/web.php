@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@index')->name('home.index');
+
+Route::post('pet/validate', 'PetController@validateName')->name('pet.validate');
+Route::resource('pet', 'PetController');
