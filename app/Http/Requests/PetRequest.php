@@ -34,11 +34,11 @@ class PetRequest extends FormRequest
 
         return [
             'name'      => $name,
-            'nickname'  => 'string',
+            'nickname'  => '',
             'weight'    => array('required','regex:'.$regex),
             'height'    => array('required','regex:'.$regex),
-            'color'     => 'string',
-            'friendliness'  => 'string',
+            'color'     => '',
+            'friendliness'  => '',
             'birthday'  => 'required|date',
         ];
     }

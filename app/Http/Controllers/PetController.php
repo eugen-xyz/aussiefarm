@@ -24,6 +24,14 @@ class PetController extends Controller
         return view('pet.index', compact('data'));
     }
 
+    public function getList()
+    {
+
+        $pet = Pet::orderByName('asc')->status(1)->get();
+
+        return $pet;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -56,7 +64,8 @@ class PetController extends Controller
         $pet->gender = $request->gender;
         $pet->color = $request->color;
         $pet->friendliness = $request->friendliness;
-        $pet->birthday = Carbon::parse($request->birthday);
+        $pet->birthday = Carbon::parse($request->birthday)->format('Y-m-d');
+        $pet->status = 1;
 
         $pet->save();
 
@@ -65,14 +74,6 @@ class PetController extends Controller
         return route('pet.create');
     }
 
-    public function validateName(Request $request)
-    {
-        $pet = Pet::where('name', $request->name)->count();
-
-        if($pet == 0) echo 'true';
-        else echo 'false';
-    
-    }
 
     /**
      * Display the specified resource.
@@ -80,9 +81,20 @@ class PetController extends Controller
      * @param  \App\Pet  $pet
      * @return \Illuminate\Http\Response
      */
-    public function show(Pet $pet)
+    public function show($request)
     {
-        //
+
+        $data = [
+            'title' => $request,
+            'description' => 'know more about your favorite pet',
+        ];
+
+        $name = str_replace('-', ' ', $request);
+        $pet = Pet::where('name', $name)->status(1)->first();
+
+        $related = Pet::gender($pet->gender)->where('pet_id', '!=', $pet->pet_id)->limit(4)->get();
+      
+        return view('pet.show', compact('data', 'pet', 'related'));
     }
 
     /**
@@ -93,7 +105,14 @@ class PetController extends Controller
      */
     public function edit(Pet $pet)
     {
-        //
+        $data = [
+            'title' => 'Edit Kangaroo',
+            'description' => 'Edit Kangaroo',
+        ];
+
+        $data['pet'] = $pet;
+
+        return view('pet.edit', compact('data' , 'pet'));
     }
 
     /**
@@ -103,9 +122,24 @@ class PetController extends Controller
      * @param  \App\Pet  $pet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pet $pet)
+    public function update(PetRequest $request, Pet $pet)
     {
-        //
+    
+        $pet->name = $request->name;
+        $pet->nickname = $request->nickname;
+        $pet->weight = $request->weight;
+        $pet->height = $request->height;
+        $pet->gender = $request->gender;
+        $pet->color = $request->color;
+        $pet->friendliness = $request->friendliness;
+        $pet->birthday = Carbon::parse($request->birthday)->format('Y-m-d');
+        $pet->status = 1;
+
+        $pet->save();
+
+        session()->flash('message', 'Pet updated successfully!'); 
+
+        return route('pet.edit', $pet->pet_id);
     }
 
     /**
@@ -117,5 +151,25 @@ class PetController extends Controller
     public function destroy(Pet $pet)
     {
         //
+    }
+
+    public function validateName(Request $request)
+    {
+        // return 'true';
+        $pet = Pet::where('name', $request->name)->first();
+
+        if($pet === null) {
+            echo 'true';
+            exit;
+        } 
+        
+        if($pet['pet_id'] == $request->pet_id) {
+            echo 'true';
+            exit;
+        }
+        echo 'false';
+        exit;
+        
+    
     }
 }
