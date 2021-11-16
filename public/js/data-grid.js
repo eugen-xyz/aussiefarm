@@ -33,7 +33,6 @@
             paging: {
                 enabled: true,
                 pageSize: 10,
-                pageIndex: 1  
             }
         
         });
