@@ -39,15 +39,17 @@
         @endif
 
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-           
-            <div class="col mb-5">
+            
+            @include('pet.partials.form')
+
+            {{-- <div class="col mb-5">
                 <form id="form">
             
                     {{ csrf_field() }}
             
                     <label for="name">Name</label>
                     <div class="mb-3">
-                        <input type="text" class="form-control" value="">
+                        <input type="text" class="form-control" value="{{ $pet->name ?? '' }}">
                         <span class="name_error"></span>
                     </div>
                     
@@ -91,8 +93,8 @@
                     <div class="mb-3">
                         <select  class="form-control" value="">
                             <option value="">Select</option>
-                            <option value="male">Friendly</option>
-                            <option value="female">Not Friendly</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="not friendly">Not Friendly</option>
                         </select>
                         <span class="friendliness_error"></span>
                     </div>
@@ -106,128 +108,19 @@
                     <button type="submit" class="btn btn-primary">Submit</a>
             
                 </form>
-            </div>
+            </div> --}}
         </div>
     </div>
 </section>
 
-
-<script>
-    $(document).ready(function(){
-
-        $('[class*="error"]').css('color', 'red');
-        
-        $( function() {
-            $( "#birthday" ).datepicker({
-                changeYear: true
-            });
-        } );
- 
-        var action = '{{ route('pet.store') }}';
-
-        var name = ['_token', 'name', 'nickname', 'weight', 'height', 'gender', 'color', 'friendliness', 'birthday'];
-    
-        $("#form :input").each(function(ndx){
-            if(ndx >= name.length) return;
-            this.setAttribute('name', name[ndx]);   
-            this.setAttribute('id', name[ndx]);   
-       
-        });
-
-        $('#form').validate({
-            ignore: [],
-            rules: {
-                name: {
-                    required: true,
-                    remote: {
-                        url:  window.location.origin + "/pet/validate",
-                        type: "POST"
-                    }
-                },
-                nickname: {
-                    required: true,
-                    minlength: 2
-                },
-                weight: {
-                    required: true,
-                    number: true
-                },
-                height: {
-                    required: true,
-                    number: true
-                },
-                gender: {
-                    required: true,
-                },
-                color: {
-                    minlength: 2
-                },
-                birthday: {
-                    required: true,
-                },
-                
-            },
-            messages: {
-                name: {
-                    required: "Name is required",
-                    remote: "Name is already taken",
-                },
-                nickname: {
-                    minlength: "Nickname must be at least 2 characters",
-                },
-
-            },
-            errorPlacement: function(error, element) {
-                if (element.attr("id") == 'name') {
-                    error.appendTo(".name_error");
-                }
-                if (element.attr("id") == 'nickname') {
-                    error.appendTo(".nickname_error");
-                }
-                if (element.attr("id") == 'weight') {
-                    error.appendTo(".weight_error");
-                }
-                if (element.attr("id") == 'height') {
-                    error.appendTo(".height_error");
-                }
-                if (element.attr("id") == 'gender') {
-                    error.appendTo(".gender_error");
-                }
-                if (element.attr("id") == 'color') {
-                    error.appendTo(".color_error");
-                }
-                if (element.attr("id") == 'friendliness') {
-                    error.appendTo(".friendliness_error");
-                }
-                if (element.attr("id") == 'birthday') {
-                    error.appendTo(".birthday_error");
-                }
-            },
-            submitHandler: function(form, e) {
-                e.preventDefault();
-
-                $("#form :input").each(function(ndx){
-                    if(ndx >= name.length) return;
-                    this.setAttribute('name', name[ndx]);   
-                    this.setAttribute('id', name[ndx]);   
-        
-                });
-
-                console.log($("#form").serialize());
-
-                $.ajax({
-                    type: 'POST',
-                    url: action,
-                    data: $("#form").serialize(), 
-                    success: function(response) { 
-
-                       window.location.replace(response);
-                    },
-                });
-            }
-        });
-
-    });
-</script>
-
 @endsection
+
+@push('custom-scripts')
+    <script>
+        var action = '{{ route('pet.store') }}';
+        var type = 'post';
+        var option = '';
+    </script>
+
+    <script src="{{ URL::asset('js/pet.js') }}"></script>
+@endpush
