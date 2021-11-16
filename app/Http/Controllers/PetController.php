@@ -24,14 +24,6 @@ class PetController extends Controller
         return view('pet.index', compact('data'));
     }
 
-    public function getList()
-    {
-
-        $pet = Pet::orderByName('asc')->status(1)->get();
-
-        return $pet;
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -142,20 +134,27 @@ class PetController extends Controller
         return route('pet.edit', $pet->pet_id);
     }
 
+
     /**
-     * Remove the specified resource from storage.
+     * Get list use for datagrid
      *
-     * @param  \App\Pet  $pet
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function destroy(Pet $pet)
+    public function getList()
     {
-        //
+        $pet = Pet::orderByName('asc')->status(1)->get();
+        return $pet;
     }
 
+
+    /**
+     * Validate name if exists
+     *
+     * @param Request $request
+     * @return void
+     */
     public function validateName(Request $request)
     {
-        // return 'true';
         $pet = Pet::where('name', $request->name)->first();
 
         if($pet === null) {
