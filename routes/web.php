@@ -13,5 +13,9 @@
 
 Route::get('/', 'HomeController@index')->name('home.index');
 
-Route::post('pet/validate', 'PetController@validateName')->name('pet.validate');
+Route::get('pet/validate', 'PetController@validateName')->name('pet.validate');
+
+Route::get('pet/getList', 'PetController@getList')->name('pet.getList');
+
 Route::resource('pet', 'PetController');
+Route::get('pet/{name}', 'PetController@show')->name('pet.show');
